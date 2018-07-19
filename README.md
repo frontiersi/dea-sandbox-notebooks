@@ -1,2 +1,2 @@
-# Sandbox_Notebooks
-Jupyter Notebooks to be used with jupyterhub sandbox
+# Open Data Cube Sandbox Notebooks
+Jupyter Notebooks to be used with FrontierSI's JupyterHub sandbox.
