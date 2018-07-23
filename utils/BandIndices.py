@@ -42,7 +42,8 @@ def calculate_indices(ds, index):
     '''
 
     if index == 'NDWI':
-        print('The formula we are using is (green - nir)/(green + nir)')
+        desc = """Normalized Difference Water Index (NDWI) - A common index for detecting water where NDWI = (Green-NIR) / 
+                (Green+NIR). """
         try:
             indexout = ((ds.green - ds.nir)/(ds.green + ds.nir))
         except AttributeError:
@@ -51,7 +52,7 @@ def calculate_indices(ds, index):
             except:
                 print('Error! NDWI requires green and nir bands')
     elif index == 'NDVI':
-        print('The formula we are using is (nir - red)/(nir + red)')
+        desc = """ Normalized Difference Vegetation Index (NDVI) - The most common vegetation index where NDVI = (NIR-Red) / (NIR+Red).        Values of NDVI are typically: 0.6 to 0.9 (dense vegetation), 0.2 to 0.5 (grasslands), -0.1 to 0.1 (bare soil, snow), -1.0 (deep water). """
         try:
             indexout = ((ds.nir - ds.red)/(ds.nir + ds.red))
         except AttributeError:
@@ -60,7 +61,7 @@ def calculate_indices(ds, index):
             except:
                 print('Error! NDVI requires red and nir bands')  
     elif index == 'GNDVI':
-        print('The formula we are using is (nir - green)/(nir + green)')
+        desc = """GNDVI: Green Normalised Difference Vegetation Index"""
         try:
             indexout = ((ds.nir - ds.green)/(ds.nir + ds.green))
         except AttributeError:
@@ -69,20 +70,46 @@ def calculate_indices(ds, index):
             except:
                 print('Error! GNDVI requires green and nir bands')
     elif index == 'NDMI':
-        print('The formula we are using is (nir - swir1)/(nir + swir1)')
+        desc = """NDMI Normalised Difference Moisture Index the formula we are using is (nir - swir1)/(nir + swir1) """
         try:
             indexout = ((ds.nir - ds.swir1)/(ds.nir + ds.swir1))
         except AttributeError:
             try:
                 indexout = ((ds.nir1 - ds.swir1)/(ds.nir1 + ds.swir1))
             except:
-                print('Error! NDVI requires swir1 and nir bands')  
+                print('Error! NDMI requires swir1 and nir bands')  
+                
+    elif index == 'NDBI':
+        
+        desc = """Normalized Difference Buildup Index (NDBI) - A common index for detecting urbanization where NDBI = (SWIR1-NIR) / 
+                (SWIR1+NIR). """
+        try:
+            indexout = ((ds.swir1-ds.nir)/(ds.swir1 - ds.nir))
+        except AttributeError:
+            try:
+                indexout = ((ds.swir1-ds.nir)/(ds.swir1 - ds.nir))
+            except:
+                print('Error! NDBI requires swir1 and nir bands')  
+               
+    elif index == 'NBR':
+        
+        desc = """Normalized Burn Ratio (NBR) - Similar to NDBI (reverse sign), this index is used to estimate burn severity. NBR =                 (NIR-SWIR1) / (NIR+SWIR1). Typical values are: <-0.1 for post fire regrowth, -0.1 to +0.1 for unburned, 0.1 to 0.27 for low-severity burn, 0.27 to 0.66 for moderate severity burn and >0.66 for high severity burn. """
+        try:
+            indexout = ((ds.nir-ds.swir1)/(ds.nir + ds.swir1))
+        except AttributeError:
+            try:
+                indexout = ((ds.nir-ds.swir1)/(ds.nir + ds.swir1))
+            except:
+                print('Error! NDBI requires swir1 and nir bands')  
+
     try:
-        return indexout
+        return (indexout, desc)
     except:
         print('Hmmmmm. I don\'t recognise that index. '
               'Options I currently have are NDVI, GNDVI, NDMI and NDWI.')
 
+        
+        
 def geological_indices(ds, index):
     '''
     Available indices are all calculated within the same function. If an

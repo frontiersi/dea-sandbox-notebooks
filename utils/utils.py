@@ -32,6 +32,37 @@ def three_band_image(ds, bands, time=0, figsize=[10, 10], projection='projected'
 
     return img_toshow
 
+##---
+def transform_from_wgs(getLong, getLat, EPSGa):
+    source = osr.SpatialReference()
+    source.ImportFromEPSG(4326)
+
+    target = osr.SpatialReference()
+    target.ImportFromEPSG(EPSGa)
+
+    transform = osr.CoordinateTransformation(source, target)
+
+    point = ogr.CreateGeometryFromWkt("POINT (" + str(getLong) + " " + str(getLat) + ")")
+    point.Transform(transform)
+    return [point.GetX(), point.GetY()]
+
+##--
+
+def transform_from_wgs_poly(geo_json,EPSGa):
+
+    polygon = ogr.CreateGeometryFromJson(str(geo_json))
+
+    source = osr.SpatialReference()
+    source.ImportFromEPSG(4326)
+
+    target = osr.SpatialReference()
+    target.ImportFromEPSG(EPSGa)
+
+    transform = osr.CoordinateTransformation(source, target)
+    polygon.Transform(transform)
+
+    return eval(polygon.ExportToJson())
+
 
 def load_config_extents(file):
     config = json.load(open(file))
