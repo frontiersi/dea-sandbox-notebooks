@@ -4,6 +4,7 @@ from skimage import exposure
 import numpy as np
 import osr
 import ogr
+from geopy.geocoders import GoogleV3
 
 
 def lat_lon_to_epsg(lat_max, lon_min):
@@ -89,3 +90,29 @@ def transform_to_wgs(getLong, getLat, EPSGa):
     point = ogr.CreateGeometryFromWkt("POINT (" + str(getLong[0]) + " " + str(getLat[0]) + ")")
     point.Transform(transform)
     return [point.GetX(), point.GetY()]
+
+
+
+def find_mining_tenement(mine_id):
+    
+    driver = ogr.GetDriverByName('ESRI Shapefile')
+    file_path = 'data/Mining_Tenements_Centroids_WGS.shp' 
+    dataSource = driver.Open(file_path, 0) # 0 means read-only. 1 means writeable.
+    if not dataSource:
+        print ('missing source data ')
+        return
+    
+    layer = dataSource.GetLayer()
+    layer.SetAttributeFilter("fmt_tenid = '" + mine_id + "'")
+    
+    for mine in layer:
+        point = mine.GetGeometryRef()
+    
+    return [point.GetY(),point.GetX()]
+
+def find_address(address_text):
+    
+    g = GoogleV3()
+    location = g.geocode(address_text)
+    
+    return [location.latitude,location.longitude]

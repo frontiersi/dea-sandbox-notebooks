@@ -47,8 +47,8 @@ def calculate_indices(ds, index):
         try:
             indexout = ((ds.green - ds.nir)/(ds.green + ds.nir))
         except AttributeError:
-            try:
-                indexout = ((ds.green - ds.nir1)/(ds.green + ds.nir1))
+            try: 
+                indexout = ((ds.nbar_green - ds.nbar_nir_1)/(ds.nbar_green + ds.nbar_nir_1))
             except:
                 print('Error! NDWI requires green and nir bands')
     elif index == 'NDVI':
@@ -57,7 +57,7 @@ def calculate_indices(ds, index):
             indexout = ((ds.nir - ds.red)/(ds.nir + ds.red))
         except AttributeError:
             try:
-                indexout = ((ds.nir1 - ds.red)/(ds.nir1 + ds.red))
+                indexout = ((ds.nbar_nir_1 - ds.nbar_red)/(ds.nbar_nir_1 + ds.nbar_red))
             except:
                 print('Error! NDVI requires red and nir bands')  
     elif index == 'GNDVI':
@@ -66,7 +66,7 @@ def calculate_indices(ds, index):
             indexout = ((ds.nir - ds.green)/(ds.nir + ds.green))
         except AttributeError:
             try:
-                indexout = ((ds.nir1 - ds.green)/(ds.nir1 + ds.green))
+                indexout = ((ds.nbar_nir_1 - ds.nbar_green)/(ds.nbar_nir_1 + ds.nbar_green))
             except:
                 print('Error! GNDVI requires green and nir bands')
     elif index == 'NDMI':
@@ -75,7 +75,7 @@ def calculate_indices(ds, index):
             indexout = ((ds.nir - ds.swir1)/(ds.nir + ds.swir1))
         except AttributeError:
             try:
-                indexout = ((ds.nir1 - ds.swir1)/(ds.nir1 + ds.swir1))
+                indexout = ((ds.nbar_nir_1 - ds.nbar_swir_2)/(ds.nbar_nir_1 + ds.nbar_swir_2))
             except:
                 print('Error! NDMI requires swir1 and nir bands')  
                 
@@ -87,7 +87,7 @@ def calculate_indices(ds, index):
             indexout = ((ds.swir1-ds.nir)/(ds.swir1 - ds.nir))
         except AttributeError:
             try:
-                indexout = ((ds.swir1-ds.nir)/(ds.swir1 - ds.nir))
+                indexout = ((ds.nbar_swir_2-ds.nbar_nir_1)/(ds.nbar_swir_2 - ds.nbar_nir_1))
             except:
                 print('Error! NDBI requires swir1 and nir bands')  
                
@@ -98,7 +98,7 @@ def calculate_indices(ds, index):
             indexout = ((ds.nir-ds.swir1)/(ds.nir + ds.swir1))
         except AttributeError:
             try:
-                indexout = ((ds.nir-ds.swir1)/(ds.nir + ds.swir1))
+                indexout = ((ds.nbar_nir_1-ds.nbar_swir_2)/(ds.nbar_nir_1 + ds.nbar_swir_2))
             except:
                 print('Error! NDBI requires swir1 and nir bands')  
 
