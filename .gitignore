@@ -1,2 +1,5 @@
 .ipynb_checkpoints
 *.pyc
+.datacube.conf
+.ipython
+.local
