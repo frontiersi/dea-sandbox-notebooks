@@ -4,3 +4,4 @@
 .ipython
 .local
 .jupyter
+utils/__pycache__
