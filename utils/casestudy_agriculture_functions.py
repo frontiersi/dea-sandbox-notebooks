@@ -21,10 +21,13 @@ from ipyleaflet import (
 import datetime as dt
 import datacube
 import ogr
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import rasterio
 import xarray as xr
 from IPython.display import display
+import warnings
+import ipywidgets as widgets
 
 # Load utility functions
 from utils.DEADataHandling import load_clearsentinel2
@@ -43,8 +46,10 @@ def load_agriculture_data():
     ds - data set containing combined, masked data from Sentinel-2a and -2b.
     Masked values are set to 'nan'
     """
+    # Suppress warnings
+    warnings.filterwarnings('ignore')
 
-    # initialise the data cube. 'app' argument is used to identify this app
+    # Initialise the data cube. 'app' argument is used to identify this app
     dc = datacube.Datacube(app='agriculture-app')
 
     # Specify latitude and longitude ranges
@@ -115,6 +120,11 @@ def run_agriculture_app(ds):
     ds - data set containing combined, masked data from Sentinel-2a and -2b.
     Must also have an attribute containing the NDVI value for each pixel
     """
+    # Suppress warnings
+    warnings.filterwarnings('ignore')
+
+    # Update plotting functionality through rcParams
+    mpl.rcParams.update({'figure.autolayout': True})
 
     # Define the bounding box that will be overlayed on the interactive map
     # The bounds are hard-coded to match those from the loaded data
@@ -137,32 +147,19 @@ def run_agriculture_app(ds):
             "type": "Polygon",
             "coordinates": [
                 [
-                    [
-                        152.395805,
-                        -24.995971
-                    ],
-                    [
-                        152.395805,
-                        -24.974997
-                    ],
-                    [
-                        152.429994,
-                        -24.974997
-                    ],
-                    [
-                        152.429994,
-                        -24.995971
-                    ],
-                    [
-                        152.395805,
-                        -24.995971
-                    ]
+                    [152.395805, -24.995971],
+                    [152.395805, -24.974997],
+                    [152.429994, -24.974997],
+                    [152.429994, -24.995971],
+                    [152.395805, -24.995971]
                 ]
             ]
         }
     }
 
-    # create a map geometry from the geom_obj dictionary
+    # Create a map geometry from the geom_obj dictionary
+    # center specifies where the background map view should focus on
+    # zoom specifies how zoomed in the background map should be
     loadeddata_geometry = ogr.CreateGeometryFromJson(str(geom_obj['geometry']))
     loadeddata_center = [
         loadeddata_geometry.Centroid().GetY(),
@@ -179,17 +176,28 @@ def run_agriculture_app(ds):
 
     # define the drawing controls
     studyarea_drawctrl = DrawControl(
-        polygon={"shapeOptions": {"fillOpacity": 0, "color": "blue"}}
+        polygon={"shapeOptions": {"fillOpacity": 0}}
     )
 
     # add drawing controls and data bound geometry to the map
     studyarea_map.add_control(studyarea_drawctrl)
     studyarea_map.add_layer(GeoJSON(data=geom_obj))
 
-    # Index to count and label drawn polygons
+    # Index to count drawn polygons
     global polygon_number
     polygon_number = 0
 
+    # Define widgets to interact with
+    instruction = widgets.Output(layout={'border': '1px solid black'})
+    with instruction:
+        print("Draw a polygon within the red box to view a plot of "
+              "average NDVI over time in that area.")
+
+    info = widgets.Output(layout={'border': '1px solid black'})
+    with info:
+        print("Plot status:")
+
+    # Function to execute each time something is drawn on the map
     def handle_draw(self, action, geo_json):
         global polygon_number
 
@@ -199,6 +207,10 @@ def run_agriculture_app(ds):
 
         # Execute behaviour based on what the user draws
         if geo_json['geometry']['type'] == 'Polygon':
+
+            info.clear_output()
+            with info:
+                print("Plot status: polygon sucessfully added to plot.")
 
             # Convert the drawn geometry to pixel coordinates
             geom_selectedarea = transform_from_wgs_poly(
@@ -221,12 +233,13 @@ def run_agriculture_app(ds):
 
             # Get list of matplotlib colours for plotting
             colour_list = plt.rcParams['axes.prop_cycle'].by_key()['color']
+            colour_index = polygon_number % len(colour_list)
 
             # Plot the data with data points marked
             xr.plot.plot(
                 masked_ds_mean,
                 marker='*',
-                color=colour_list[polygon_number]
+                color=colour_list[colour_index]
             )
             plt.title("Average NDVI from Sentinel-2")
             plt.xlabel("Date")
@@ -237,19 +250,27 @@ def run_agriculture_app(ds):
             studyarea_map.add_layer(
                 GeoJSON(data=geo_json,
                         style={
-                            'color': colour_list[polygon_number],
+                            'color': colour_list[colour_index],
                             'opacity': 1,
-                            'weight': 5.0,
+                            'weight': 4.5,
                             'fillOpacity': 0.0
                         }
-                )
+                        )
             )
 
             # Iterate the polygon number before drawing another polygon
             polygon_number = polygon_number + 1
 
+        else:
+            info.clear_output()
+            with info:
+                print("Plot status: this drawing tool is not currently "
+                      "supported. Please use the polygon tool.")
+
     # call to say activate handle_draw function on draw
     studyarea_drawctrl.on_draw(handle_draw)
 
     # plot the map
+    display(instruction)
     display(studyarea_map)
+    display(info)
