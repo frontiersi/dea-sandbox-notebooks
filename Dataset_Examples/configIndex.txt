@@ -1,0 +1,61 @@
+{
+    "extent": "1.1919, 1.4509, 6.0809, 6.2218",
+    "output_crs": "epsg:32750",
+    "lat": [
+        -34.415171,
+        -34.448878
+    ],
+    "lon": [
+        116.668086,
+        116.58804
+    ],
+    "product": "ls8_nbart_geomedian_annual",
+    "time": [
+        "1986-01-02",
+        "2020-05-11"
+    ],
+    "geoJSON": {
+        "type": "Feature",
+        "properties": {
+            "style": {
+                "stroke": true,
+                "color": "#0000FF",
+                "weight": 4,
+                "opacity": 0.5,
+                "fill": true,
+                "fillColor": null,
+                "fillOpacity": 0.2,
+                "showArea": true,
+                "clickable": true
+            }
+        },
+        "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+                [
+                    [
+                        116.58804,
+                        -34.448878
+                    ],
+                    [
+                        116.58804,
+                        -34.415171
+                    ],
+                    [
+                        116.668086,
+                        -34.415171
+                    ],
+                    [
+                        116.668086,
+                        -34.448878
+                    ],
+                    [
+                        116.58804,
+                        -34.448878
+                    ]
+                ]
+            ]
+        }
+    },
+    "load_id": "87e2ac1c-b15f-45aa-9878-32ece22f88c5"
+}
