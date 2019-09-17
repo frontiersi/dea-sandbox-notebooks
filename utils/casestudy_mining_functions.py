@@ -161,8 +161,8 @@ def run_mining_app(ds):
     with instruction:
         print(
             "Draw a polygon within the red box to view plots of "
-            "the fractional cover values of bare soil, green vegetation and "
-            "brown vegetation for the area over time."
+            "the fractional cover values of bare, green and "
+            "non-green cover for the area over time."
         )
 
     info = widgets.Output(layout={"border": "1px solid black"})
@@ -235,9 +235,9 @@ def run_mining_app(ds):
             masked_ds_mean.NPV.interpolate_na(dim="time", method="nearest").plot.line("-", ax=ax[2])
 
             # reset titles back to custom
-            ax[0].set_ylabel("Bare soil")
-            ax[1].set_ylabel("Green vegetation")
-            ax[2].set_ylabel("Brown vegetation")
+            ax[0].set_ylabel("Bare cover")
+            ax[1].set_ylabel("Green cover")
+            ax[2].set_ylabel("Non-green cover")
 
             # refresh display
             fig_display.clear_output(wait=True)  # wait=True reduces flicker effect
